@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создать аккаунт</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.08);
+            --input-bg: rgba(15, 23, 42, 0.6);
+            --error: #ef4444;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, sans-serif; }
+
+        body {
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.15) 0px, transparent 50%);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            padding: 40px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        h2 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 32px; }
+        .form-group { margin-bottom: 20px; position: relative; }
+        label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 8px; color: #cbd5e1; text-transform: uppercase; }
+        
+        input {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 15px;
+            color: #fff;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+        }
+
+        button.btn-submit {
+            width: 100%;
+            padding: 15px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 10px;
+        }
+
+        button.btn-submit:hover { background: var(--primary-hover); transform: translateY(-1px); }
+        .error-msg { color: var(--error); font-size: 12px; margin-top: 6px; display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Регистрация</h2>
+        <p class="subtitle">Создайте аккаунт для доступа к системе</p>
+        
+        <div class="form-group">
+            <label for="reg-name">Имя пользователя</label>
+            <input type="text" id="reg-name" placeholder="alex_dev">
+            <div class="error-msg" id="name-error">Пожалуйста, введите имя</div>
+        </div>
+        
+        <div class="form-group">
+            <label for="reg-email">Email адрес</label>
+            <input type="email" id="reg-email" placeholder="name@example.com">
+            <div class="error-msg" id="email-error">Некорректный email</div>
+        </div>
+
+        <button class="btn-submit" onclick="handleRegister()">Продолжить</button>
+    </div>
+
+    <script>
+        // ЛОКАЛЬНАЯ ПРОВЕРКА: Если в localStorage уже есть токен, сразу перекидываем
+        if (localStorage.getItem("session_token") === "active") {
+            window.location.href = "check.html";
+        }
+
+        function handleRegister() {
+            const name = document.getElementById('reg-name').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+            let isValid = true;
+
+            document.querySelectorAll('.error-msg').forEach(el => el.style.display = 'none');
+
+            if (name === "") {
+                document.getElementById('name-error').style.display = 'block';
+                isValid = false;
+            }
+            if (!email.includes('@') || email.length < 5) {
+                document.getElementById('email-error').style.display = 'block';
+                isValid = false;
+            }
+
+            if (!isValid) return;
+
+            // Локально сохраняем статус входа
+            localStorage.setItem("session_token", "active");
+
+            // Перенаправляем на страницу проверки
+            window.location.href = "check.html";
+        }
+    </script>
+</body>
+</html>
