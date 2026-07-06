@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель управления</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text: #f8fafc;
+            --accent: #10b981;
+            --border: rgba(255, 255, 255, 0.08);
+            --danger: #ef4444;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .card { background: var(--card-bg); backdrop-filter: blur(16px); border: 1px solid var(--border); padding: 40px; border-radius: 24px; width: 100%; max-width: 420px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+        .icon { font-size: 48px; margin-bottom: 16px; display: inline-block; background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: 50%; color: var(--accent); }
+        h1 { font-size: 32px; font-weight: 800; margin-bottom: 12px; }
+        p { color: #94a3b8; font-size: 15px; margin-bottom: 32px; }
+        button { width: 100%; padding: 14px; border: 1px solid rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.1); color: var(--danger); border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        button:hover { background: var(--danger); color: white; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div class="icon">✓</div>
+        <h1>Проверка</h1>
+        <p>Доступ разрешен. Вы успешно авторизовались локально.</p>
+        <button onclick="handleLogout()">Выйти из системы</button>
+    </div>
+
+    <script>
+        // ЛОКАЛЬНАЯ ЗАЩИТА: Если токена нет — выкидываем обратно
+        if (localStorage.getItem("session_token") !== "active") {
+            window.location.href = "index.html";
+        }
+
+        function handleLogout() {
+            // Удаляем токен из локальной памяти
+            localStorage.removeItem("session_token");
+            window.location.href = "index.html";
+        }
+    </script>
+</body>
+</html>
