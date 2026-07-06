@@ -13,6 +13,7 @@
             --btn-blue: #0095f6;
             --btn-blue-hover: #1877f2;
             --text-muted: #737373;
+            --error: #ed4956;
         }
 
         * {
@@ -26,9 +27,15 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .main-wrapper {
+            flex: 1;
+            display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
             padding: 20px;
         }
 
@@ -54,7 +61,6 @@
             color: var(--text-color);
         }
 
-        /* Стили полей ввода как на скриншоте */
         input[type="text"],
         input[type="password"],
         select {
@@ -73,7 +79,6 @@
             background-color: #fff;
         }
 
-        /* Группировка даты рождения в строку */
         .birthday-selectors {
             display: flex;
             gap: 8px;
@@ -84,7 +89,6 @@
             cursor: pointer;
         }
 
-        /* Текст о конфиденциальности (обобщенный) */
         .policy-text {
             font-size: 12px;
             color: var(--text-muted);
@@ -94,7 +98,12 @@
             margin-bottom: 8px;
         }
 
-        /* Кнопки */
+        .policy-text a {
+            color: #00376b;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
         button {
             width: 100%;
             padding: 14px;
@@ -127,71 +136,174 @@
         }
 
         .error-msg {
-            color: #ed4956;
+            color: var(--error);
             font-size: 12px;
             margin-top: 4px;
             display: none;
         }
+
+        /* Подвал плитка */
+        footer {
+            padding: 24px 20px;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px 16px;
+            max-width: 800px;
+            margin: 0 auto 12px auto;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            font-size: 12px;
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        .copyright {
+            color: var(--text-muted);
+            font-size: 12px;
+            margin-top: 12px;
+        }
+
+        /* Модалки */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background: #fff;
+            padding: 30px;
+            border-radius: 16px;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .modal-card h3 { font-size: 20px; margin-bottom: 12px; color: #000; text-align: center; font-weight: 700; }
+        
+        .modal-text-content {
+            font-size: 13px;
+            color: #333;
+            max-height: 250px;
+            overflow-y: auto;
+            text-align: left;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            padding-right: 5px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .modal-text-content p {
+            margin-bottom: 10px;
+        }
+
+        .modal-card button { background: var(--btn-blue); color: #fff; padding: 12px; border-radius: 8px; width: 100%; }
+        .modal-card button:hover { background: var(--btn-blue-hover); }
     </style>
 </head>
 <body>
 
-    <div class="reg-container">
-        
-        <div class="form-group">
-            <span class="label-title">Пароль</span>
-            <input type="password" id="reg-password" placeholder="Пароль">
-        </div>
-
-        <div class="form-group">
-            <span class="label-title">Дата рождения <span style="color: var(--text-muted); cursor: pointer;">?</span></span>
-            <div class="birthday-selectors">
-                <select id="birth-day">
-                    <option value="" disabled selected>День</option>
-                    </select>
-                <select id="birth-month">
-                    <option value="" disabled selected>Месяц</option>
-                    <option value="1">Январь</option>
-                    <option value="2">Февраль</option>
-                    <option value="3">Март</option>
-                    <option value="4">Апрель</option>
-                    <option value="5">Май</option>
-                    <option value="6">Июнь</option>
-                    <option value="7">Июль</option>
-                    <option value="8">Август</option>
-                    <option value="9">Сентябрь</option>
-                    <option value="10">Октябрь</option>
-                    <option value="11">Ноябрь</option>
-                    <option value="12">Декабрь</option>
-                </select>
-                <select id="birth-year">
-                    <option value="" disabled selected>Год</option>
-                    </select>
+    <div class="main-wrapper">
+        <div class="reg-container">
+            
+            <div class="form-group">
+                <span class="label-title">Пароль</span>
+                <input type="password" id="reg-password" placeholder="Пароль">
             </div>
+
+            <div class="form-group">
+                <span class="label-title">Дата рождения <span style="color: var(--text-muted); cursor: pointer;" onclick="openModal('age')">?</span></span>
+                <div class="birthday-selectors">
+                    <select id="birth-day">
+                        <option value="" disabled selected>День</option>
+                    </select>
+                    <select id="birth-month">
+                        <option value="" disabled selected>Месяц</option>
+                        <option value="1">Январь</option>
+                        <option value="2">Февраль</option>
+                        <option value="3">Март</option>
+                        <option value="4">Апрель</option>
+                        <option value="5">Май</option>
+                        <option value="6">Июнь</option>
+                        <option value="7">Июль</option>
+                        <option value="8">Август</option>
+                        <option value="9">Сентябрь</option>
+                        <option value="10">Октябрь</option>
+                        <option value="11">Ноябрь</option>
+                        <option value="12">Декабрь</option>
+                    </select>
+                    <select id="birth-year">
+                        <option value="" disabled selected>Год</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="label-title">Название</span>
+                <input type="text" id="reg-fullname" placeholder="Имя и фамилия">
+            </div>
+
+            <div class="form-group">
+                <span class="label-title">Имя пользователя</span>
+                <input type="text" id="reg-username" placeholder="Имя пользователя">
+                <div class="error-msg" id="main-error">Пожалуйста, заполните ВСЕ поля формы!</div>
+            </div>
+
+            <p class="policy-text">
+                Нажимая Отправить, вы соглашаетесь создать аккаунт и принимаете <a href="javascript:void(0);" onclick="openModal('terms')">Пользовательское соглашение</a> и <a href="javascript:void(0);" onclick="openModal('privacy')">Политику конфиденциальности</a>.
+            </p>
+
+            <button class="btn-submit" onclick="handleRegister()">Отправить</button>
+            <button class="btn-secondary" onclick="openModal('login')">У меня уже есть аккаунт</button>
+
         </div>
+    </div>
 
-        <div class="form-group">
-            <span class="label-title">Название</span>
-            <input type="text" id="reg-fullname" placeholder="Имя и фамилия">
+    <footer>
+        <div class="footer-links">
+            <a href="javascript:void(0);" onclick="openModal('info')">Информация</a>
+            <a href="javascript:void(0);" onclick="openModal('blog')">Блог</a>
+            <a href="javascript:void(0);" onclick="openModal('jobs')">Вакансии</a>
+            <a href="javascript:void(0);" onclick="openModal('help')">Помощь</a>
+            <a href="javascript:void(0);" onclick="openModal('api')">API</a>
+            <a href="javascript:void(0);" onclick="openModal('privacy')">Конфиденциальность</a>
+            <a href="javascript:void(0);" onclick="openModal('terms')">Условия</a>
+            <a href="javascript:void(0);" onclick="openModal('location')">Места</a>
         </div>
+        <div class="copyright">&copy; 2026 Проверка Ленты</div>
+    </footer>
 
-        <div class="form-group">
-            <span class="label-title">Имя пользователя</span>
-            <input type="text" id="reg-username" placeholder="Имя пользователя">
-            <div class="error-msg" id="main-error">Пожалуйста, заполните все поля корректно</div>
+    <div class="modal-overlay" id="modal">
+        <div class="modal-card">
+            <h3 id="modal-title">Заголовок</h3>
+            <div class="modal-text-content" id="modal-desc">Описание</div>
+            <button onclick="closeModal()">Принять и Закрыть</button>
         </div>
-
-        <p class="policy-text">
-            Нажимая Отправить, вы соглашаетесь создать аккаунт и принимаете Пользовательское соглашение и Политику конфиденциальности нашего сервиса. Мы заботимся о безопасности ваших данных.
-        </p>
-
-        <button class="btn-submit" onclick="handleRegister()">Отправить</button>
-        <button class="btn-secondary" onclick="alert('Окно входа в разработке')">У меня уже есть аккаунт</button>
-
     </div>
 
     <script>
-        // Заполняем списки дней и годов динамически
         const daySelect = document.getElementById('birth-day');
         const yearSelect = document.getElementById('birth-year');
 
@@ -204,12 +316,10 @@
             yearSelect.options[yearSelect.options.length] = new Option(i, i);
         }
 
-        // Авто-перенаправление, если сессия уже активна
         if (localStorage.getItem("session_token") === "active") {
             window.location.href = "check.html";
         }
 
-        // Функция обработки клика "Отправить"
         function handleRegister() {
             const password = document.getElementById('reg-password').value;
             const fullname = document.getElementById('reg-fullname').value.trim();
@@ -219,20 +329,76 @@
             const year = document.getElementById('birth-year').value;
             const errorBlock = document.getElementById('main-error');
 
-            // Простая валидация полей
             if (!password || !fullname || !username || !day || !month || !year) {
                 errorBlock.style.display = 'block';
                 return;
             }
 
             errorBlock.style.display = 'none';
-
-            // Сохраняем сессию (работает и локально, и на GitHub Pages)
             localStorage.setItem("session_token", "active");
             localStorage.setItem("username", username);
-
-            // Переходим на страницу "Проверка"
             window.location.href = "check.html";
+        }
+
+        // База текстов окон с твоей строкой в "info"
+        const modalData = {
+            terms: {
+                title: "Пользовательское соглашение",
+                html: `<p><b>1. Общие положения</b><br>Настоящее Соглашение регулирует отношения между Вами (Пользователем) и Администрацией платформы. Регистрируясь на данном ресурсе, Вы автоматически принимаете данные условия.</p>
+                       <p><b>2. Правила поведения</b><br>Пользователь имеет право беспрепятственно публиковать медиаконтент в личной ленте, ставить отметки «Мне нравится» и использовать доступные интерактивные функции. При этом Пользователь безоговорочно <u>обязуется быть крутым</u>, поддерживать позитивную атмосферу и не нарушать гармонию сообщества.</p>
+                       <p><b>3. Интеллектуальная собственность</b><br>Все опубликованные графические материалы и текстовые описания остаются под защитой вашего личного пространства. Сервис не претендует на авторство ваших мемов и личных публикаций.</p>`
+            },
+            privacy: {
+                title: "Политика конфиденциальности",
+                html: `<p><b>1. Безопасность данных</b><br>Мы глубоко уважаем вашу конфиденциальность. Введенные вами имя пользователя, пароль и дата рождения обрабатываются исключительно внутри вашего веб-браузера.</p>
+                       <p><b>2. Передача третьим лицам</b><br>Данный ресурс не использует внешние облачные серверы для хранения персональной информации. Ваши данные никогда не будут переданы рекламным агентствам или третьим лицам, так как они физически не покидают ваше устройство.</p>
+                       <p><b>3. Локальные хранилища</b><br>Для автоматического сохранения сессии входа используются изолированные технологии локальной памяти браузера, обеспечивающие мгновенный доступ к вашей персональной ленте.</p>`
+            },
+            age: {
+                title: "Справка о возрасте",
+                html: `<p>Регистрация на платформе доступна пользователям любого возраста. Данные о дате рождения необходимы исключительно для внутренней персонализации интерфейса.</p>`
+            },
+            login: {
+                title: "Окно входа",
+                html: `<p>У вас уже есть аккаунт? Отлично! В данный момент модуль прямой авторизации находится на плановом техническом обслуживании.</p><p>Вы можете ввести свой привычный никнейм в форму регистрации заново — система распознает ваше устройство и мгновенно откроет доступ к вашей личной ленте.</p>`
+            },
+            info: {
+                title: "Информация",
+                html: `<p>Проект разработан для демонстрации возможностей локального хранения данных без участия громоздких серверных баз.</p>`
+            },
+            blog: {
+                title: "Наш Блог",
+                html: `<p><b>Обновление платформы:</b><br>- Успешно обновлена юридическая документация.<br>- Из соглашений полностью удалены технические системные заголовки.<br>- Оптимизирована работа модальных окон для всех типов экранов.</p>`
+            },
+            jobs: {
+                title: "Вакансии",
+                html: `<p>Наша команда расширяется! Мы открываем поиск по следующим направлениям:</p><p>1. <b>Креативный контент-мейкер</b> (генерация идей для персональной ленты).<br>2. <b>Менеджер по качеству интерфейсов</b> (тестирование удобства сайта).</p>`
+            },
+            help: {
+                title: "Служба поддержки",
+                html: `<p>Если у вас возникли трудности с отображением картинок в ленте, убедитесь, что вы копируете прямую ссылку на изображение (ссылка должна заканчиваться на .jpg, .png или .webp).</p><p>По всем остальным вопросам перезагрузите страницу.</p>`
+            },
+            api: {
+                title: "API для разработчиков",
+                html: `<p>Архитектура платформы построена на базе изолированных локальных протоколов.</p><p>Внешнее веб-API на данном этапе закрыто в целях обеспечения абсолютной приватности пользовательских сессий.</p>`
+            },
+            location: {
+                title: "Геолокация",
+                html: `<p>Платформа заботится о вашей анонимности и намеренно не отслеживает географические координаты вашего устройства.</p>`
+            }
+        };
+
+        function openModal(type) {
+            const data = modalData[type];
+            if (!data) return;
+            
+            document.getElementById('modal-title').innerText = data.title;
+            document.getElementById('modal-desc').innerHTML = data.html;
+            document.getElementById('modal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
         }
     </script>
 </body>
