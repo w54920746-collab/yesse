@@ -3,28 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Создать аккаунт</title>
+    <title>Регистрация аккаунта</title>
     <style>
         :root {
-            --primary: #6366f1;
-            --primary-hover: #4f46e5;
-            --bg: #0f172a;
-            --card-bg: rgba(30, 41, 59, 0.7);
-            --text: #f8fafc;
-            --text-muted: #94a3b8;
-            --border: rgba(255, 255, 255, 0.08);
-            --input-bg: rgba(15, 23, 42, 0.6);
-            --error: #ef4444;
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --input-border: #dbdbdb;
+            --input-focus: #a8a8a8;
+            --btn-blue: #0095f6;
+            --btn-blue-hover: #1877f2;
+            --text-muted: #737373;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, sans-serif; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
 
         body {
-            background-color: var(--bg);
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.15) 0px, transparent 50%);
-            color: var(--text);
+            background-color: var(--bg-color);
+            color: var(--text-color);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -32,114 +32,206 @@
             padding: 20px;
         }
 
-        .card {
-            background: var(--card-bg);
-            backdrop-filter: blur(16px);
-            border: 1px solid var(--border);
-            padding: 40px;
-            border-radius: 24px;
+        .reg-container {
             width: 100%;
-            max-width: 420px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            max-width: 440px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
         }
 
-        h2 {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            background: linear-gradient(to right, #fff, #94a3b8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
 
-        .subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 32px; }
-        .form-group { margin-bottom: 20px; position: relative; }
-        label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 8px; color: #cbd5e1; text-transform: uppercase; }
-        
-        input {
+        .label-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--text-color);
+        }
+
+        /* Стили полей ввода как на скриншоте */
+        input[type="text"],
+        input[type="password"],
+        select {
             width: 100%;
             padding: 14px 16px;
-            background: var(--input-bg);
-            border: 1px solid var(--border);
+            border: 1px solid var(--input-border);
             border-radius: 12px;
-            font-size: 15px;
-            color: #fff;
+            font-size: 14px;
+            background-color: #fafafa;
             outline: none;
-            transition: all 0.2s ease;
+            color: var(--text-color);
         }
 
-        input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+        input:focus, select:focus {
+            border-color: var(--input-focus);
+            background-color: #fff;
         }
 
-        button.btn-submit {
+        /* Группировка даты рождения в строку */
+        .birthday-selectors {
+            display: flex;
+            gap: 8px;
+        }
+
+        .birthday-selectors select {
+            flex: 1;
+            cursor: pointer;
+        }
+
+        /* Текст о конфиденциальности (обобщенный) */
+        .policy-text {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            text-align: left;
+            margin-top: 8px;
+            margin-bottom: 8px;
+        }
+
+        /* Кнопки */
+        button {
             width: 100%;
-            padding: 15px;
-            background: var(--primary);
-            color: white;
+            padding: 14px;
             border: none;
             border-radius: 12px;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
-            margin-top: 10px;
+            transition: background-color 0.1s ease;
         }
 
-        button.btn-submit:hover { background: var(--primary-hover); transform: translateY(-1px); }
-        .error-msg { color: var(--error); font-size: 12px; margin-top: 6px; display: none; }
+        .btn-submit {
+            background-color: var(--btn-blue);
+            color: white;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--btn-blue-hover);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-color);
+            border: 1px solid var(--input-border);
+            margin-top: 4px;
+        }
+
+        .btn-secondary:hover {
+            background-color: #fafafa;
+        }
+
+        .error-msg {
+            color: #ed4956;
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <h2>Регистрация</h2>
-        <p class="subtitle">Создайте аккаунт для доступа к системе</p>
+    <div class="reg-container">
         
         <div class="form-group">
-            <label for="reg-name">Имя пользователя</label>
-            <input type="text" id="reg-name" placeholder="alex_dev">
-            <div class="error-msg" id="name-error">Пожалуйста, введите имя</div>
-        </div>
-        
-        <div class="form-group">
-            <label for="reg-email">Email адрес</label>
-            <input type="email" id="reg-email" placeholder="name@example.com">
-            <div class="error-msg" id="email-error">Некорректный email</div>
+            <span class="label-title">Пароль</span>
+            <input type="password" id="reg-password" placeholder="Пароль">
         </div>
 
-        <button class="btn-submit" onclick="handleRegister()">Продолжить</button>
+        <div class="form-group">
+            <span class="label-title">Дата рождения <span style="color: var(--text-muted); cursor: pointer;">?</span></span>
+            <div class="birthday-selectors">
+                <select id="birth-day">
+                    <option value="" disabled selected>День</option>
+                    </select>
+                <select id="birth-month">
+                    <option value="" disabled selected>Месяц</option>
+                    <option value="1">Январь</option>
+                    <option value="2">Февраль</option>
+                    <option value="3">Март</option>
+                    <option value="4">Апрель</option>
+                    <option value="5">Май</option>
+                    <option value="6">Июнь</option>
+                    <option value="7">Июль</option>
+                    <option value="8">Август</option>
+                    <option value="9">Сентябрь</option>
+                    <option value="10">Октябрь</option>
+                    <option value="11">Ноябрь</option>
+                    <option value="12">Декабрь</option>
+                </select>
+                <select id="birth-year">
+                    <option value="" disabled selected>Год</option>
+                    </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <span class="label-title">Название</span>
+            <input type="text" id="reg-fullname" placeholder="Имя и фамилия">
+        </div>
+
+        <div class="form-group">
+            <span class="label-title">Имя пользователя</span>
+            <input type="text" id="reg-username" placeholder="Имя пользователя">
+            <div class="error-msg" id="main-error">Пожалуйста, заполните все поля корректно</div>
+        </div>
+
+        <p class="policy-text">
+            Нажимая Отправить, вы соглашаетесь создать аккаунт и принимаете Пользовательское соглашение и Политику конфиденциальности нашего сервиса. Мы заботимся о безопасности ваших данных.
+        </p>
+
+        <button class="btn-submit" onclick="handleRegister()">Отправить</button>
+        <button class="btn-secondary" onclick="alert('Окно входа в разработке')">У меня уже есть аккаунт</button>
+
     </div>
 
     <script>
-        // ЛОКАЛЬНАЯ ПРОВЕРКА: Если в localStorage уже есть токен, сразу перекидываем
+        // Заполняем списки дней и годов динамически
+        const daySelect = document.getElementById('birth-day');
+        const yearSelect = document.getElementById('birth-year');
+
+        for (let i = 1; i <= 31; i++) {
+            daySelect.options[daySelect.options.length] = new Option(i, i);
+        }
+
+        const currentYear = new Date().getFullYear();
+        for (let i = currentYear; i >= 1920; i--) {
+            yearSelect.options[yearSelect.options.length] = new Option(i, i);
+        }
+
+        // Авто-перенаправление, если сессия уже активна
         if (localStorage.getItem("session_token") === "active") {
             window.location.href = "check.html";
         }
 
+        // Функция обработки клика "Отправить"
         function handleRegister() {
-            const name = document.getElementById('reg-name').value.trim();
-            const email = document.getElementById('reg-email').value.trim();
-            let isValid = true;
+            const password = document.getElementById('reg-password').value;
+            const fullname = document.getElementById('reg-fullname').value.trim();
+            const username = document.getElementById('reg-username').value.trim();
+            const day = document.getElementById('birth-day').value;
+            const month = document.getElementById('birth-month').value;
+            const year = document.getElementById('birth-year').value;
+            const errorBlock = document.getElementById('main-error');
 
-            document.querySelectorAll('.error-msg').forEach(el => el.style.display = 'none');
-
-            if (name === "") {
-                document.getElementById('name-error').style.display = 'block';
-                isValid = false;
+            // Простая валидация полей
+            if (!password || !fullname || !username || !day || !month || !year) {
+                errorBlock.style.display = 'block';
+                return;
             }
-            if (!email.includes('@') || email.length < 5) {
-                document.getElementById('email-error').style.display = 'block';
-                isValid = false;
-            }
 
-            if (!isValid) return;
+            errorBlock.style.display = 'none';
 
-            // Локально сохраняем статус входа
+            // Сохраняем сессию (работает и локально, и на GitHub Pages)
             localStorage.setItem("session_token", "active");
+            localStorage.setItem("username", username);
 
-            // Перенаправляем на страницу проверки
+            // Переходим на страницу "Проверка"
             window.location.href = "check.html";
         }
     </script>
