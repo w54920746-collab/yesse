@@ -142,6 +142,11 @@
             display: none;
         }
 
+        /* Переключение режимов */
+        .login-mode .reg-only {
+            display: none;
+        }
+
         /* Подвал плитка */
         footer {
             padding: 24px 20px;
@@ -226,14 +231,25 @@
 <body>
 
     <div class="main-wrapper">
-        <div class="reg-container">
+        <div class="reg-container" id="auth-container">
+            <h2 id="form-title" style="text-align: center; font-size: 22px; margin-bottom: 5px;">Регистрация</h2>
             
+            <div class="form-group">
+                <span class="label-title">Имя пользователя</span>
+                <input type="text" id="reg-username" placeholder="Имя пользователя">
+            </div>
+
             <div class="form-group">
                 <span class="label-title">Пароль</span>
                 <input type="password" id="reg-password" placeholder="Пароль">
             </div>
 
-            <div class="form-group">
+            <div class="form-group reg-only">
+                <span class="label-title">Название</span>
+                <input type="text" id="reg-fullname" placeholder="Имя и фамилия">
+            </div>
+
+            <div class="form-group reg-only">
                 <span class="label-title">Дата рождения <span style="color: var(--text-muted); cursor: pointer;" onclick="openModal('age')">?</span></span>
                 <div class="birthday-selectors">
                     <select id="birth-day">
@@ -260,23 +276,14 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <span class="label-title">Название</span>
-                <input type="text" id="reg-fullname" placeholder="Имя и фамилия">
-            </div>
+            <div class="error-msg" id="main-error">Пожалуйста, заполните поля формы!</div>
 
-            <div class="form-group">
-                <span class="label-title">Имя пользователя</span>
-                <input type="text" id="reg-username" placeholder="Имя пользователя">
-                <div class="error-msg" id="main-error">Пожалуйста, заполните ВСЕ поля формы!</div>
-            </div>
-
-            <p class="policy-text">
+            <p class="policy-text reg-only">
                 Нажимая Отправить, вы соглашаетесь создать аккаунт и принимаете <a href="javascript:void(0);" onclick="openModal('terms')">Пользовательское соглашение</a> и <a href="javascript:void(0);" onclick="openModal('privacy')">Политику конфиденциальности</a>.
             </p>
 
-            <button class="btn-submit" onclick="handleRegister()">Отправить</button>
-            <button class="btn-secondary" onclick="openModal('login')">У меня уже есть аккаунт</button>
+            <button class="btn-submit" id="main-btn" onclick="handleAuth()">Отправить</button>
+            <button class="btn-secondary" id="toggle-btn" onclick="toggleAuthMode()">У меня уже есть аккаунт</button>
 
         </div>
     </div>
@@ -304,6 +311,8 @@
     </div>
 
     <script>
+        let isLoginMode = false;
+
         const daySelect = document.getElementById('birth-day');
         const yearSelect = document.getElementById('birth-year');
 
@@ -320,27 +329,71 @@
             window.location.href = "check.html";
         }
 
-        function handleRegister() {
+        function toggleAuthMode() {
+            isLoginMode = !isLoginMode;
+            const container = document.getElementById('auth-container');
+            const formTitle = document.getElementById('form-title');
+            const mainBtn = document.getElementById('main-btn');
+            const toggleBtn = document.getElementById('toggle-btn');
+            document.getElementById('main-error').style.display = 'none';
+
+            if (isLoginMode) {
+                container.classList.add('login-mode');
+                formTitle.innerText = "Вход в систему";
+                mainBtn.innerText = "Войти";
+                toggleBtn.innerText = "Создать аккаунт (Регистрация)";
+            } else {
+                container.classList.remove('login-mode');
+                formTitle.innerText = "Регистрация";
+                mainBtn.innerText = "Отправить";
+                toggleBtn.innerText = "У меня уже есть аккаунт";
+            }
+        }
+
+        function handleAuth() {
+            const username = document.getElementById('reg-username').value.trim();
             const password = document.getElementById('reg-password').value;
             const fullname = document.getElementById('reg-fullname').value.trim();
-            const username = document.getElementById('reg-username').value.trim();
             const day = document.getElementById('birth-day').value;
             const month = document.getElementById('birth-month').value;
             const year = document.getElementById('birth-year').value;
             const errorBlock = document.getElementById('main-error');
 
-            if (!password || !fullname || !username || !day || !month || !year) {
+            if (!username || !password) {
+                errorBlock.innerText = "Заполните имя пользователя и пароль!";
                 errorBlock.style.display = 'block';
                 return;
             }
 
-            errorBlock.style.display = 'none';
-            localStorage.setItem("session_token", "active");
-            localStorage.setItem("username", username);
-            window.location.href = "check.html";
+            if (isLoginMode) {
+                // Вход
+                const savedPassword = localStorage.getItem("local_pwd_" + username);
+                if (savedPassword && savedPassword === password) {
+                    errorBlock.style.display = 'none';
+                    localStorage.setItem("session_token", "active");
+                    localStorage.setItem("username", username);
+                    window.location.href = "check.html";
+                } else {
+                    errorBlock.innerText = "Неверный никнейм или пароль!";
+                    errorBlock.style.display = 'block';
+                }
+            } else {
+                // Регистрация
+                if (!fullname || !day || !month || !year) {
+                    errorBlock.innerText = "Пожалуйста, заполните ВСЕ поля формы!";
+                    errorBlock.style.display = 'block';
+                    return;
+                }
+
+                errorBlock.style.display = 'none';
+                localStorage.setItem("local_pwd_" + username, password);
+                localStorage.setItem("fullname", fullname);
+                localStorage.setItem("session_token", "active");
+                localStorage.setItem("username", username);
+                window.location.href = "check.html";
+            }
         }
 
-        // База текстов окон с твоей строкой в "info"
         const modalData = {
             terms: {
                 title: "Пользовательское соглашение",
@@ -352,7 +405,7 @@
                 title: "Политика конфиденциальности",
                 html: `<p><b>1. Безопасность данных</b><br>Мы глубоко уважаем вашу конфиденциальность. Введенные вами имя пользователя, пароль и дата рождения обрабатываются исключительно внутри вашего веб-браузера.</p>
                        <p><b>2. Передача третьим лицам</b><br>Данный ресурс не использует внешние облачные серверы для хранения персональной информации. Ваши данные никогда не будут переданы рекламным агентствам или третьим лицам, так как они физически не покидают ваше устройство.</p>
-                       <p><b>3. Локальные хранилища</b><br>Для автоматического сохранения сессии входа используются изолированные технологии локальной памяти браузера, обеспечивающие мгновенный доступ к вашей персональной ленте.</p>`
+                       <p><b>3. Локальные хранилища</b><br>Для автоматического сохранения сессии входа используются технологии локальной памяти браузера, обеспечивающие мгновенный доступ к вашей персональной ленте.</p>`
             },
             age: {
                 title: "Справка о возрасте",
@@ -360,7 +413,7 @@
             },
             login: {
                 title: "Окно входа",
-                html: `<p>У вас уже есть аккаунт? Отлично! В данный момент модуль прямой авторизации находится на плановом техническом обслуживании.</p><p>Вы можете ввести свой привычный никнейм в форму регистрации заново — система распознает ваше устройство и мгновенно откроет доступ к вашей личной ленте.</p>`
+                html: `<p>У вас уже есть аккаунт? Отлично! Используйте переключатель прямо на форме, чтобы войти под своими данными.</p>`
             },
             info: {
                 title: "Информация",
