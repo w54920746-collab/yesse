@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль • Ремейк</title>
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --border-color: #dbdbdb;
+            --text-color: #000000;
+            --text-muted: #737373;
+            --blue-link: #0095f6;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); display: flex; min-height: 100vh; }
+
+        /* Левое боковое меню */
+        .left-sidebar { width: 244px; border-right: 1px solid var(--border-color); height: 100vh; position: fixed; top: 0; left: 0; padding: 24px 12px; display: flex; flex-direction: column; justify-content: space-between; background: #fff; z-index: 10; }
+        .nav-logo { font-size: 22px; font-weight: 700; font-style: italic; text-decoration: none; color: #000; padding-left: 12px; margin-bottom: 30px; display: block; }
+        .nav-links { display: flex; flex-direction: column; gap: 4px; }
+        .nav-item { display: flex; align-items: center; gap: 16px; padding: 12px; font-size: 16px; text-decoration: none; color: var(--text-color); border-radius: 8px; font-weight: 500; background: none; border: none; width: 100%; text-align: left; cursor: pointer; }
+        .nav-item:hover { background-color: #f2f2f2; }
+        .nav-item.active { font-weight: 700; }
+        .nav-item.logout-btn { color: #ed4956; }
+
+        /* Контентная область профиля */
+        .main-content { margin-left: 244px; flex: 1; padding: 40px 20px; display: flex; justify-content: center; background: #fff; }
+        .profile-container { max-width: 935px; width: 100%; display: flex; flex-direction: column; gap: 44px; }
+
+        /* Шапка профиля */
+        .profile-header { display: flex; gap: 100px; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 44px; }
+        .avatar-container { width: 150px; height: 150px; display: flex; justify-content: center; align-items: center; }
+        .profile-avatar-big { width: 150px; height: 150px; border-radius: 50%; background: #efefef; display: flex; justify-content: center; align-items: center; font-size: 64px; font-weight: bold; text-transform: uppercase; border: 1px solid var(--border-color); color: #555; }
+        
+        .profile-info { display: flex; flex-direction: column; gap: 20px; flex: 1; }
+        .username-row { display: flex; align-items: center; gap: 20px; font-size: 20px; font-weight: 300; }
+        .username-text { font-weight: 600; font-size: 20px; }
+        .edit-btn { background: #efefef; border: none; padding: 7px 16px; font-size: 14px; font-weight: 600; border-radius: 8px; cursor: pointer; color: var(--text-color); }
+        .edit-btn:hover { background: #dbdbdb; }
+
+        .stats-row { display: flex; gap: 40px; font-size: 16px; }
+        .stat-item b { font-weight: 600; }
+
+        .bio-row { display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
+        .full-name { font-weight: 600; }
+
+        /* Сетка постов (публикаций) */
+        .posts-section-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; text-align: center; border-top: 1px solid #000; margin-top: -1px; padding-top: 18px; display: flex; justify-content: center; gap: 6px; }
+        
+        /* Сетка моих подписок */
+        .subs-grid-title { font-size: 16px; font-weight: 600; margin-top: 20px; color: var(--text-color); }
+        .subs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 16px; margin-top: 16px; }
+        .sub-card { border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; background: #fafafa; position: relative; }
+        .sub-card-avatar { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; }
+        .sub-card-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; color: var(--text-color); text-decoration: none; }
+        .sub-unfollow-btn { font-size: 11px; background: #fff; border: 1px solid var(--border-color); padding: 4px 10px; border-radius: 4px; cursor: pointer; font-weight: 600; width: 100%; }
+        .sub-unfollow-btn:hover { background: #ed4956; color: #fff; border-color: #ed4956; }
+    </style>
+</head>
+<body>
+
+    <!-- ЛЕВОЕ МЕНЮ -->
+    <aside class="left-sidebar">
+        <div class="top-nav-part">
+            <a href="check.html" class="nav-logo">ЛентаРемейк</a>
+            <div class="nav-links">
+                <button class="nav-item" onclick="location.href='check.html'">🏠 Главная</button>
+                <button class="nav-item">🔍 Поисковый запрос</button>
+                <button class="nav-item">🧭 Интересное</button>
+                <button class="nav-item">🎬 Reels</button>
+                <button class="nav-item">✉️ Сообщения</button>
+                <button class="nav-item">❤️ Уведомления</button>
+                <button class="nav-item active" onclick="location.reload()">➕ Создать</button>
+                <button class="nav-item active" onclick="location.reload()">👤 Профиль</button>
+            </div>
+        </div>
+        <div class="bottom-nav-part">
+            <button class="nav-item logout-btn" onclick="handleLogout()">Выйти</button>
+        </div>
+    </aside>
+
+    <!-- КОНТЕНТ ПРОФИЛЯ -->
+    <main class="main-content">
+        <div class="profile-container">
+            
+            <!-- Шапка профиля -->
+            <header class="profile-header">
+                <div class="avatar-container">
+                    <div class="profile-avatar-big" id="prof-big-avatar">?</div>
+                </div>
+                
+                <div class="profile-info">
+                    <div class="username-row">
+                        <span class="username-text" id="prof-username">username</span>
+                        <button class="edit-btn">Редактировать профиль</button>
+                    </div>
+                    
+                    <div class="stats-row">
+                        <span class="stat-item"><b>0</b> публикаций</span>
+                        <span class="stat-item"><b>0</b> подписчиков</span>
+                        <!-- Число подписок теперь обновляется автоматически из LocalStorage -->
+                        <span class="stat-item"><b id="prof-subs-count">0</b> подписок</span>
+                    </div>
+                    
+                    <div class="bio-row">
+                        <span class="full-name" id="prof-fullname">Full Name</span>
+                        <span style="color: var(--text-muted); font-size: 13px;">Личный блог разработчика</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Раздел подписок -->
+            <div>
+                <div class="posts-section-title">👥 Ваши подписки</div>
+                <h3 class="subs-grid-title" id="subs-title-status">Вы подписаны:</h3>
+                
+                <!-- Сюда скрипт выведет карточки людей, на которых ты нажал "Подписаться" -->
+                <div class="subs-grid" id="profile-subs-grid"></div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        if (localStorage.getItem("session_token") !== "active") { window.location.href = "index.html"; }
+
+        const currentUsername = localStorage.getItem("username") || "thadversse";
+        document.getElementById('prof-username').innerText = currentUsername;
+        document.getElementById('prof-fullname').innerText = localStorage.getItem("fullname") || "samir nur";
+        document.getElementById('prof-big-avatar').innerText = currentUsername.charAt(0);
+
+        // Та же самая глобальная база пользователей для сопоставления ID и данных
+        const initialUsers = [
+            { id: "khamzat", username: "Khamzat Chimaev", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" },
+            { id: "mubina", username: "Mubina Baxodirova", avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100" },
+            { id: "jamshid", username: "Jamshidxon Ziyoxonov", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100" },
+            { id: "sardor", username: "Sardor Gang", avatar: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=100" },
+            { id: "omonxon", username: "Omonxon Axatov", avatar: "https://images.unsplash.com/photo-1488161628813-04466f872be2?w=100" }
+        ];
+
+        function renderProfileSubscriptions() {
+            // Подтягиваем массив подписок текущего юзера
+            let activeFollows = JSON.parse(localStorage.getItem("my_follows_" + currentUsername)) || [];
+            
+            const gridContainer = document.getElementById('profile-subs-grid');
+            const countBadge = document.getElementById('prof-subs-count');
+            const titleStatus = document.getElementById('subs-title-status');
+
+            // Обновляем счетчик подписок в шапке
+            countBadge.innerText = activeFollows.length;
+
+            gridContainer.innerHTML = "";
+
+            if(activeFollows.length === 0) {
+                titleStatus.innerText = "Вы пока ни на кого не подписаны";
+                gridContainer.innerHTML = `<p style="color:var(--text-muted); font-size: 14px; grid-column: 1/-1;">Перейдите на <a href="check.html" style="color:var(--blue-link); text-decoration:none; font-weight:600;">Главную ленту</a> и подпишитесь на кого-нибудь из рекомендаций!</p>`;
+                return;
+            }
+
+            titleStatus.innerText = "Вы подписаны:";
+
+            // Рендерим карточку для каждого человека
+            activeFollows.forEach(userId => {
+                const userData = initialUsers.find(u => u.id === userId);
+                if (userData) {
+                    const card = document.createElement('div');
+                    card.className = 'sub-card';
+                    card.innerHTML = `
+                        <img src="${userData.avatar}" class="sub-card-avatar">
+                        <div class="sub-card-name">${userData.username}</div>
+                        <button class="sub-unfollow-btn" onclick="unfollowFromProfile('${userData.id}')">Отписаться</button>
+                    `;
+                    gridContainer.appendChild(card);
+                }
+            });
+        }
+
+        // Кнопка «Отписаться» прямо из профиля
+        function unfollowFromProfile(id) {
+            let activeFollows = JSON.parse(localStorage.getItem("my_follows_" + currentUsername)) || [];
+            activeFollows = activeFollows.filter(item => item !== id);
+            localStorage.setItem("my_follows_" + currentUsername, JSON.stringify(activeFollows));
+            
+            // Перерендериваем интерфейс
+            renderProfileSubscriptions();
+        }
+
+        function handleLogout() {
+            localStorage.removeItem("session_token");
+            window.location.href = "index.html";
+        }
+
+        // Запуск рендера подписок при загрузке профиля
+        renderProfileSubscriptions();
+    </script>
+</body>
+</html>
