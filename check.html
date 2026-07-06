@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Лента</title>
+    <title>Лента Ремейк</title>
     <style>
         :root {
             --bg-color: #fafafa;
@@ -15,380 +15,156 @@
             --heart-red: #ed4956;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); padding-top: 75px; }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            padding-top: 60px; /* Отступ под фиксированную шапку */
+        /* Шапка сайта */
+        .navbar { position: fixed; top: 0; left: 0; width: 100%; height: 60px; background: #fff; border-bottom: 1px solid var(--border-color); display: flex; justify-content: center; z-index: 100; padding: 0 20px; }
+        .nav-container { width: 100%; max-width: 935px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 22px; font-weight: 700; font-style: italic; text-decoration: none; color: #000; }
+        
+        /* Выпадающее меню профиля */
+        .profile-menu-container { position: relative; }
+        .user-trigger-btn { background: none; border: none; font-weight: 600; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 6px; color: var(--text-color); }
+        
+        .dropdown-menu { 
+            position: absolute; top: 35px; right: 0; background: white; border: 1px solid var(--border-color);
+            border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 180px; display: none; flex-direction: column; overflow: hidden;
         }
+        .dropdown-menu.active { display: flex; }
+        .dropdown-item { padding: 12px; font-size: 14px; text-decoration: none; color: var(--text-color); background: none; border: none; text-align: left; cursor: pointer; width: 100%; }
+        .dropdown-item:hover { background-color: #fafafa; }
+        .dropdown-item.logout { color: var(--heart-red); border-top: 1px solid #f0f0f0; }
 
-        /* Навигационная панель (Шапка) */
-        .navbar {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 60px;
-            background-color: #ffffff;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            padding: 0 20px;
-        }
+        /* Сетка контента */
+        .main-container { max-width: 935px; margin: 0 auto; display: flex; gap: 28px; padding: 0 20px; }
+        .feed { flex: 1; max-width: 614px; display: flex; flex-direction: column; gap: 16px; }
 
-        .nav-container {
-            width: 100%;
-            max-width: 975px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        /* Блок создания поста */
+        .create-post-card { background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+        .create-post-card h3 { font-size: 16px; font-weight: 600; }
+        .create-input { width: 100%; padding: 10px 12px; border: 1px solid var(--border-color); border-radius: 6px; outline: none; font-size: 14px; background: #fafafa; }
+        .create-input:focus { border-color: #a8a8a8; background: #fff; }
+        .btn-publish { background: var(--link-blue); color: white; border: none; padding: 10px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 14px; }
+        .btn-publish:hover { background: #1877f2; }
 
-        .logo {
-            font-size: 22px;
-            font-weight: 700;
-            font-style: italic;
-            letter-spacing: -0.5px;
-            cursor: pointer;
-            text-decoration: none;
-            color: var(--text-color);
-        }
+        /* Карточки постов в ленте */
+        .post-card { background: white; border: 1px solid var(--border-color); border-radius: 8px; display: flex; flex-direction: column; }
+        .post-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; }
+        .user-info { display: flex; align-items: center; gap: 10px; }
+        .avatar { width: 32px; height: 32px; border-radius: 50%; background: #efefef; display: flex; justify-content: center; align-items: center; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #555; }
+        .username { font-size: 14px; font-weight: 600; }
+        .post-img-wrapper { width: 100%; background: #fafafa; display: flex; justify-content: center; aspect-ratio: 1/1; overflow: hidden; }
+        .post-img { width: 100%; height: 100%; object-fit: cover; }
+        .post-actions { display: flex; justify-content: space-between; padding: 10px 16px 4px 16px; }
+        .action-btn { background: none; border: none; cursor: pointer; font-size: 22px; transition: transform 0.1s; }
+        .action-btn:active { transform: scale(1.2); }
+        .like-btn.liked { color: var(--heart-red); }
+        .post-info { padding: 0 16px 14px 16px; display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
+        .likes-count { font-weight: 600; }
 
-        .search-bar {
-            width: 268px;
-            padding: 7px 16px;
-            background-color: #efefef;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            outline: none;
-        }
-
-        .nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 22px;
-        }
-
-        .nav-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-color);
-            text-decoration: none;
-        }
-
-        .logout-btn {
-            color: var(--heart-red);
-        }
-
-        /* Основной контент */
-        .main-container {
-            max-width: 935px;
-            margin: 30px auto 0 auto;
-            display: flex;
-            gap: 28px;
-            padding: 0 20px;
-        }
-
-        /* Лента постов */
-        .feed {
-            flex: 1;
-            max-width: 614px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        /* Карточка поста */
-        .post-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .post-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 16px;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background-color: #dbdbdb;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 12px;
-            font-weight: 600;
-            color: #555;
-            text-transform: uppercase;
-        }
-
-        .username {
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .username:hover {
-            text-decoration: underline;
-        }
-
-        .post-img-wrapper {
-            width: 100%;
-            background-color: #000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            aspect-ratio: 1 / 1;
-        }
-
-        .post-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .post-actions {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 16px 8px 16px;
-        }
-
-        .left-actions {
-            display: flex;
-            gap: 16px;
-        }
-
-        .action-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 20px;
-            transition: transform 0.1s ease;
-        }
-
-        .action-btn:active {
-            transform: scale(1.2);
-        }
-
-        .like-btn.liked {
-            color: var(--heart-red);
-        }
-
-        .post-info {
-            padding: 0 16px 12px 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            font-size: 14px;
-        }
-
-        .likes-count {
-            font-weight: 600;
-        }
-
-        .caption span b {
-            margin-right: 6px;
-        }
-
-        .comments-link {
-            color: var(--text-muted);
-            cursor: pointer;
-            font-size: 14px;
-            margin-top: 4px;
-        }
-
-        /* Боковая панель (Правая колонка) */
-        .sidebar {
-            width: 320px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            padding-top: 10px;
-        }
-
-        @media (max-width: 1000px) {
-            .sidebar {
-                display: none; /* Прячем сайдбар на мобилках и узких экранах */
-            }
-            .main-container {
-                justify-content: center;
-            }
-        }
-
-        .sidebar-user {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .sidebar-suggestions {
-            background: white;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .sidebar-suggestions h4 {
-            font-size: 14px;
-            color: var(--text-muted);
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .suggestion-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .follow-link {
-            color: var(--link-blue);
-            font-size: 12px;
-            font-weight: 600;
-            text-decoration: none;
-            cursor: pointer;
-        }
+        /* Правая колонка */
+        .sidebar { width: 320px; display: flex; flex-direction: column; gap: 16px; padding-top: 4px; }
+        @media (max-width: 1000px) { .sidebar { display: none; } }
     </style>
 </head>
 <body>
 
+    <!-- Навигация (Шапка) -->
     <nav class="navbar">
         <div class="nav-container">
             <a href="#" class="logo">ЛентаРемейк</a>
-            <input type="text" class="search-bar" placeholder="Поиск">
-            <div class="nav-actions">
-                <span class="nav-btn" id="current-user-display">Пользователь</span>
-                <button class="nav-btn logout-btn" onclick="handleLogout()">Выйти</button>
+            
+            <div class="profile-menu-container">
+                <button class="user-trigger-btn" onclick="toggleDropdown()">
+                    <span id="nav-user-name">User</span> ▼
+                </button>
+                <div class="dropdown-menu" id="user-dropdown">
+                    <div class="dropdown-item" style="font-weight: 600; border-bottom: 1px solid #eee;" id="drop-full-name">Имя</div>
+                    <button class="dropdown-item logout" onclick="handleLogout()">Выйти из аккаунта</button>
+                </div>
             </div>
         </div>
     </nav>
 
+    <!-- Основной рабочий блок -->
     <div class="main-container">
         
-        <main class="feed" id="feed-container">
-            </main>
-
-        <aside class="sidebar">
-            <div class="sidebar-user">
-                <div class="user-info">
-                    <div class="avatar" id="sidebar-avatar">?</div>
-                    <div>
-                        <div class="username" id="sidebar-username">username</div>
-                        <div style="color: var(--text-muted); font-size: 12px;" id="sidebar-fullname">Имя аккаунта</div>
-                    </div>
-                </div>
+        <div class="feed">
+            <!-- Блок для создания постов -->
+            <div class="create-post-card">
+                <h3>Создать публикацию</h3>
+                <input type="text" id="post-img-url" class="create-input" placeholder="Вставьте прямую ссылку на фото (URL)...">
+                <input type="text" id="post-caption" class="create-input" placeholder="Напишите текст к фотографии...">
+                <button class="btn-publish" onclick="addNewPost()">Опубликовать</button>
             </div>
 
-            <div class="sidebar-suggestions">
-                <h4>Рекомендации для вас</h4>
-                
-                <div class="suggestion-item">
-                    <div class="user-info">
-                        <div class="avatar">M</div>
-                        <div class="username">memes_king</div>
-                    </div>
-                    <span class="follow-link" onclick="this.innerText = this.innerText === 'Подписаться' ? 'Подписан' : 'Подписаться'">Подписаться</span>
-                </div>
+            <!-- Сюда генерятся все посты -->
+            <div id="feed-container" style="display:flex; flex-direction:column; gap:16px;"></div>
+        </div>
 
-                <div class="suggestion-item">
-                    <div class="user-info">
-                        <div class="avatar">W</div>
-                        <div class="username">web_developer</div>
-                    </div>
-                    <span class="follow-link" onclick="this.innerText = this.innerText === 'Подписаться' ? 'Подписан' : 'Подписаться'">Подписаться</span>
-                </div>
-
-                <div class="suggestion-item">
-                    <div class="user-info">
-                        <div class="avatar">C</div>
-                        <div class="username">cats_of_world</div>
-                    </div>
-                    <span class="follow-link" onclick="this.innerText = this.innerText === 'Подписаться' ? 'Подписан' : 'Подписаться'">Подписаться</span>
+        <!-- Правый сайдбар (Профиль) -->
+        <aside class="sidebar">
+            <div class="user-info">
+                <div class="avatar" id="side-avatar">?</div>
+                <div>
+                    <div class="username" id="side-username">User</div>
+                    <div style="color: var(--text-muted); font-size: 12px;" id="side-fullname">ФИО аккаунта</div>
                 </div>
             </div>
         </aside>
-
     </div>
 
     <script>
-        // Проверка авторизации. Если токена нет — выкидываем назад на index.html
-        if (localStorage.getItem("session_token") !== "active") {
-            window.location.href = "index.html";
+        // Проверяем авторизацию при загрузке
+        if (localStorage.getItem("session_token") !== "active") { window.location.href = "index.html"; }
+
+        const currentUsername = localStorage.getItem("username") || "Гость";
+        const savedFullName = localStorage.getItem("fullname") || "Участник Системы";
+
+        // Рендерим данные юзера в меню и сайдбар
+        document.getElementById('nav-user-name').innerText = currentUsername;
+        document.getElementById('drop-full-name').innerText = savedFullName;
+        document.getElementById('side-username').innerText = currentUsername;
+        document.getElementById('side-fullname').innerText = savedFullName;
+        document.getElementById('side-avatar').innerText = currentUsername.charAt(0);
+
+        // Работа выпадающего меню
+        function toggleDropdown() {
+            document.getElementById('user-dropdown').classList.toggle('active');
         }
 
-        // Берем имя пользователя из памяти
-        const currentUsername = localStorage.getItem("username") || "Гость";
-        document.getElementById('current-user-display').innerText = currentUsername;
-        document.getElementById('sidebar-username').innerText = currentUsername;
-        document.getElementById('sidebar-fullname').innerText = "Тестовый Аккаунт";
-        document.getElementById('sidebar-avatar').innerText = currentUsername.charAt(0);
+        // Закрываем менюшку, если кликнули в любое другое место экрана
+        window.addEventListener('click', function(e) {
+            if (!document.querySelector('.profile-menu-container').contains(e.target)) {
+                document.getElementById('user-dropdown').classList.remove('active');
+            }
+        });
 
-        // Функция выхода
+        // Кнопка разлогина
         function handleLogout() {
             localStorage.removeItem("session_token");
-            localStorage.removeItem("username");
             window.location.href = "index.html";
         }
 
-        // Моковые (готовые) посты для красивого рендера
-        const mockPosts = [
-            {
-                id: 1,
-                author: "nature_pics",
-                avatar: "N",
-                img: "https://picsum.photos/id/10/600/600",
-                likes: 124,
-                caption: "Прекрасный вид на утренние горы. Всем хорошего продуктивного дня! ⛰️✨"
-            },
-            {
-                id: 2,
-                author: "street_style",
-                avatar: "S",
-                img: "https://picsum.photos/id/26/600/600",
-                likes: 89,
-                caption: "Архитектура старого города завораживает. Ловите эстетику в ленту."
-            },
-            {
-                id: 3,
-                author: "coffee_lover",
-                avatar: "C",
-                img: "https://picsum.photos/id/63/600/600",
-                likes: 256,
-                caption: "Сначала кофе, потом все остальные важные дела. Согласны? ☕"
-            }
+        // Заглушечные посты, чтобы лента изначально не была пустой
+        const defaultPosts = [
+            { id: 991, author: "nature_travel", avatar: "T", img: "https://picsum.photos/id/16/600/600", likes: 32, caption: "Отличный день для путешествий!" },
+            { id: 992, author: "coffee_break", avatar: "C", img: "https://picsum.photos/id/42/600/600", likes: 147, caption: "Ароматный утренний запуск кода ☕" }
         ];
 
-        // Функция генерации постов на странице
+        // Достаем массив постов конкретного юзера, которые он сохранял
+        let userPosts = JSON.parse(localStorage.getItem("custom_posts_" + currentUsername)) || [];
+
+        // Основной рендер всей ленты
         function renderFeed() {
             const feedContainer = document.getElementById('feed-container');
-            feedContainer.innerHTML = ""; // чистим контейнер
+            feedContainer.innerHTML = "";
 
-            mockPosts.forEach(post => {
+            // Склеиваем посты юзера (они идут первыми сверху) и дефолтные карточки
+            const allPosts = [...userPosts, ...defaultPosts];
+
+            allPosts.forEach(post => {
                 const card = document.createElement('div');
                 card.className = 'post-card';
                 card.innerHTML = `
@@ -397,51 +173,64 @@
                             <div class="avatar">${post.avatar}</div>
                             <div class="username">${post.author}</div>
                         </div>
-                        <b style="cursor:pointer; color: var(--text-muted)">•••</b>
                     </div>
-                    
                     <div class="post-img-wrapper">
-                        <img src="${post.img}" class="post-img" alt="Фото поста">
+                        <img src="${post.img}" class="post-img" onerror="this.src='https://picsum.photos/600/600?blur=4'">
                     </div>
-
                     <div class="post-actions">
-                        <div class="left-actions">
-                            <button class="action-btn like-btn" onclick="toggleLike(this, ${post.id})">🤍</button>
-                            <button class="action-btn">💬</button>
-                            <button class="action-btn">✈️</button>
-                        </div>
-                        <button class="action-btn">🔖</button>
+                        <button class="action-btn like-btn" onclick="toggleLike(this, ${post.id})">🤍</button>
                     </div>
-
                     <div class="post-info">
                         <div class="likes-count"><span id="likes-val-${post.id}">${post.likes}</span> отметок «Мне нравится»</div>
-                        <div class="caption">
-                            <span><b>${post.author}</b>${post.caption}</span>
-                        </div>
-                        <div class="comments-link">Посмотреть все комментарии</div>
+                        <div><b>${post.author}</b> ${post.caption}</div>
                     </div>
                 `;
                 feedContainer.appendChild(card);
             });
         }
 
-        // Простой интерактивный лайк
+        // Функция добавления своего поста
+        function addNewPost() {
+            const imgUrl = document.getElementById('post-img-url').value.trim();
+            const caption = document.getElementById('post-caption').value.trim();
+
+            if (!imgUrl) {
+                alert("Укажите ссылку на изображение публикации!");
+                return;
+            }
+
+            const newPost = {
+                id: Date.now(),
+                author: currentUsername,
+                avatar: currentUsername.charAt(0),
+                img: imgUrl,
+                likes: 0,
+                caption: caption || "Публикация без описания."
+            };
+
+            userPosts.unshift(newPost); // Кидаем новый пост в самое начало
+            localStorage.setItem("custom_posts_" + currentUsername, JSON.stringify(userPosts));
+            
+            // Чистим поля формы ввода
+            document.getElementById('post-img-url').value = "";
+            document.getElementById('post-caption').value = "";
+            
+            renderFeed(); // Обновляем отображение
+        }
+
+        // Кнопка интерактивного лайка
         function toggleLike(btn, postId) {
             const likesCountSpan = document.getElementById(`likes-val-${postId}`);
             let currentLikes = parseInt(likesCountSpan.innerText);
 
             if (btn.classList.contains('liked')) {
-                btn.classList.remove('liked');
-                btn.innerText = "🤍";
-                likesCountSpan.innerText = currentLikes - 1;
+                btn.classList.remove('liked'); btn.innerText = "🤍"; likesCountSpan.innerText = currentLikes - 1;
             } else {
-                btn.classList.add('liked');
-                btn.innerText = "❤️";
-                likesCountSpan.innerText = currentLikes + 1;
+                btn.classList.add('liked'); btn.innerText = "❤️"; likesCountSpan.innerText = currentLikes + 1;
             }
         }
 
-        // Запускаем рендер при загрузке страницы
+        // Запуск отображения
         renderFeed();
     </script>
 </body>
